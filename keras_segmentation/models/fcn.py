@@ -61,24 +61,24 @@ def fcn_8( n_classes , encoder=vanilla_encoder ,  input_height=416, input_width=
 	o = ( Conv2D( 4096 , ( 1 , 1 ) , activation='relu' , padding='same', data_format=IMAGE_ORDERING))(o)
 	o = Dropout(0.5)(o)
 
-	o = ( Conv2D( n_classes ,  ( 1 , 1 ) ,kernel_initializer='he_normal' , data_format=IMAGE_ORDERING))(o)
-	o = Conv2DTranspose( n_classes , kernel_size=(4,4) ,  strides=(2,2) , use_bias=False, data_format=IMAGE_ORDERING )(o)
+	o = ( Conv2D( n_classes ,  ( 1 , 1 ) ,kernel_initializer='he_normal', padding='same', data_format=IMAGE_ORDERING))(o)
+	o = Conv2DTranspose( n_classes , kernel_size=(4,4) ,  strides=(2,2) , use_bias=False, data_format=IMAGE_ORDERING, padding='same' )(o)
 
 	o2 = f4
-	o2 = ( Conv2D( n_classes ,  ( 1 , 1 ) ,kernel_initializer='he_normal' , data_format=IMAGE_ORDERING))(o2)
+	o2 = ( Conv2D( n_classes ,  ( 1 , 1 ) ,kernel_initializer='he_normal' , data_format=IMAGE_ORDERING, padding='same'))(o2)
 	
 	o , o2 = crop( o , o2 , img_input )
 	
 	o = Add()([ o , o2 ])
 
-	o = Conv2DTranspose( n_classes , kernel_size=(4,4) ,  strides=(2,2) , use_bias=False, data_format=IMAGE_ORDERING )(o)
+	o = Conv2DTranspose( n_classes , kernel_size=(4,4) ,  strides=(2,2) , use_bias=False, data_format=IMAGE_ORDERING, padding='same' )(o)
 	o2 = f3 
-	o2 = ( Conv2D( n_classes ,  ( 1 , 1 ) ,kernel_initializer='he_normal' , data_format=IMAGE_ORDERING))(o2)
+	o2 = ( Conv2D( n_classes ,  ( 1 , 1 ) ,kernel_initializer='he_normal' , data_format=IMAGE_ORDERING, padding='same'))(o2)
 	o2 , o = crop( o2 , o , img_input )
 	o  = Add()([ o2 , o ])
 
 
-	o = Conv2DTranspose( n_classes , kernel_size=(16,16) ,  strides=(8,8) , use_bias=False, data_format=IMAGE_ORDERING )(o)
+	o = Conv2DTranspose( n_classes , kernel_size=(16,16) ,  strides=(8,8) , use_bias=False, data_format=IMAGE_ORDERING, padding='same' )(o)
 	
 	model = get_segmentation_model(img_input , o )
 	model.model_name = "fcn_8"
