@@ -101,7 +101,7 @@ def fcn_32( n_classes , encoder=vanilla_encoder ,  input_height=416, input_width
 	o = Dropout(0.5)(o)
 
 	o = ( Conv2D( n_classes ,  ( 1 , 1 ) ,kernel_initializer='he_normal' , data_format=IMAGE_ORDERING))(o)
-	o = Conv2DTranspose( n_classes , kernel_size=(64,64) ,  strides=(32,32) , use_bias=False ,  data_format=IMAGE_ORDERING )(o)
+	o = Conv2DTranspose( n_classes , kernel_size=(64,64) ,  strides=(32,32) , use_bias=False ,  data_format=IMAGE_ORDERING, padding='same' )(o)
 	
 	model = get_segmentation_model(img_input , o )
 	model.model_name = "fcn_32"

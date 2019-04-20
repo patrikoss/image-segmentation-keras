@@ -5,6 +5,7 @@ import glob
 import itertools
 import os
 from tqdm import tqdm
+from os.path import join as pjoin
 
 from ..models.config import IMAGE_ORDERING
 from .augmentation import augment_seg
@@ -131,3 +132,33 @@ def image_segmentation_generator( images_path , segs_path ,  batch_size,  n_clas
 
 		yield np.array(X) , np.array(Y)
 
+
+def lunaImageSegmentationGenerator( images_npz_folder, segmentations_npz_folder, n_classes, batch_size ):
+
+	def prepare_segment_batch(mask_batch, n_classes):
+		assert len(mask_batch.shape) == 3
+		height, width = mask_batch.shape[1], mask_batch.shape[2]
+
+		mask_res = []
+		for mask_nr in range(mask_batch.shape[0]):
+			seg_labels = np.zeros((height, width, n_classes))
+			for c in range(n_classes):
+				seg_labels[: , : , c ] = (mask_batch[mask_nr] == c ).astype(int)
+			mask_res.append( np.reshape(seg_labels, ( width*height , n_classes )) )
+		return np.array(mask_res)
+
+
+	while True:
+		for filename in os.listdir(images_npz_folder):
+			img = np.load(pjoin(images_npz_folder, filename))['image']
+			mask = np.load(pjoin(segmentations_npz_folder, filename))['image']
+			assert img.shape == mask.shape
+			assert len(img.shape) == 3
+			examples, width, height = mask.shape[0], mask.shape[1], mask.shape[2]
+			used = 0
+			img = img.reshape(examples, 1, width, height)
+			#mask = mask.reshape(examples, width, height, 1)
+			while used < examples:
+				z = prepare_segment_batch(mask[used: used+batch_size], n_classes)
+				yield img[used: used+batch_size], prepare_segment_batch(mask[used: used+batch_size], n_classes)
+				used += batch_size

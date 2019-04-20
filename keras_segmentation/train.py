@@ -1,6 +1,6 @@
 import argparse
 import json
-from .data_utils.data_loader import image_segmentation_generator , verify_segmentation_dataset
+from .data_utils.data_loader import image_segmentation_generator , verify_segmentation_dataset, lunaImageSegmentationGenerator
 from .models import model_from_name
 import os
 import six
@@ -93,11 +93,10 @@ def train( model  ,
 			verify_segmentation_dataset( val_images , val_annotations , n_classes )
 
 
-	train_gen = image_segmentation_generator( train_images , train_annotations ,  batch_size,  n_classes , input_height , input_width , output_height , output_width   )
-
-
-	if validate:
-		val_gen  = image_segmentation_generator( val_images , val_annotations ,  val_batch_size,  n_classes , input_height , input_width , output_height , output_width   )
+	#train_gen = image_segmentation_generator( train_images , train_annotations ,  batch_size,  n_classes , input_height , input_width , output_height , output_width   )
+	#if validate:
+	#	val_gen  = image_segmentation_generator( val_images , val_annotations ,  val_batch_size,  n_classes , input_height , input_width , output_height , output_width   )
+	train_gen = lunaImageSegmentationGenerator(train_images, train_annotations, n_classes, batch_size)
 
 
 	if not validate:

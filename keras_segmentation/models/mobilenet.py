@@ -3,7 +3,7 @@ from keras.models import *
 from keras.layers import *
 import keras.backend as K
 import keras
-
+import config
 
 
 BASE_WEIGHT_PATH = ('https://github.com/fchollet/deep-learning-models/'
