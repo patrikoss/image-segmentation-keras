@@ -2,9 +2,9 @@ import argparse
 import json
 from .data_utils.data_loader import image_segmentation_generator , verify_segmentation_dataset, lunaImageSegmentationGenerator
 from .models import model_from_name
+from keras_segmentation.metrics import mean_acc
 import os
 import six
-from keras_metrics import true_negative, true_positive, false_negative, false_positive
 
 def find_latest_checkpoint( checkpoints_path ):
 	ep = 0
@@ -63,7 +63,7 @@ def train( model  ,
 	if not optimizer_name is None:
 		model.compile(loss='categorical_crossentropy',
 			optimizer= optimizer_name ,
-			metrics=['accuracy', true_positive(), true_negative(), false_positive(), false_negative()])
+			metrics=['accuracy', mean_acc])
 
 	if not checkpoints_path is None:
 		open( checkpoints_path+"_config.json" , "w" ).write( json.dumps( {
